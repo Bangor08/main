@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Gudang (WMS)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            background: white;
+            margin-top: 30px;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+
+        .flow-section {
+            margin-bottom: 40px;
+        }
+
+        .flow-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .flow-item {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flow-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .flow-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+
+        .supplier { background: #3182ce; color: white; }
+        .receiving { background: #48bb78; color: white; }
+        .quality { background: #9f7aea; color: white; }
+        .storage { background: #2d3748; color: white; }
+        .picking { background: #ed8936; color: white; }
+        .packing { background: #38b2ac; color: white; }
+        .wip { background: #4299e1; color: white; }
+        .gudang { background: #1a365d; color: white; }
+
+        .arrow {
+            font-size: 24px;
+            color: #cbd5e0;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+
+        .feature-card h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .feature-card ul {
+            list-style-type: none;
+            color: #4a5568;
+        }
+
+        .feature-card li:before {
+            content: "✓ ";
+            color: #48bb78;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .process-support {
+            background: #edf2f7;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .support-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+
+        .support-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        }
+
+        .inventory { background-color: #4299e1; color: white; }
+        .cycle { background-color: #f56565; color: white; }
+        .returns { background-color: #9f7aea; color: white; }
+        .reporting { background-color: #ed8936; color: white; }
+        .system { background-color: #38b2ac; color: white; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .main-content { padding: 20px; }
+            .flow-container { grid-template-columns: 1fr; }
+        }
+
+        .highlight {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .highlight h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Sistem Manajemen Gudang</h1>
+            <p class="subtitle">Warehouse Management System (WMS)</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <section class="flow-section">
+                <h2>Alur Utama Sistem Gudang</h2>
+                <div class="flow-container">
+                    <div class="flow-item supplier">
+                        <h3>Supplier/Vendor</h3>
+                        <p>Titik awal pengiriman barang</p>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="flow-item receiving">
+                        <h3>Receiving</h3>
+                        <p>Penerimaan barang dengan Purchase Order (PO)</p>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="flow-item quality">
+                        <h3>Quality Control</h3>
+                        <p>Pemeriksaan kualitas barang</p>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="flow-item storage">
+                        <h3>Storage</h3>
+                        <p>Penyimpanan barang (Real Bin Location)</p>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="flow-item picking">
+                        <h3>Picking</h3>
+                        <p>Pengambilan barang sesuai Sales Order</p>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="flow-item packing">
+                        <h3>Packing/Pemakainan</h3>
+                        <p>Pengemasan produk</p>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="flow-item wip">
+                        <h3>Storage WIP</h3>
+                        <p>Work In Progress - Penyimpanan sementara</p>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div class="flow-item gudang">
+                        <h3>Gudang Finish Good</h3>
+                        <p>Penyimpanan produk jadi untuk customer</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="process-support">
+                <h2>Proses Pendukung</h2>
+                <div class="support-grid">
+                    <div class="support-item inventory">
+                        Inventory Management (Stock Control)
+                    </div>
+                    <div class="support-item cycle">
+                        Cycle Count (Stock Opname)
+                    </div>
+                    <div class="support-item returns">
+                        Returns Processing (Retur Barang)
+                    </div>
+                    <div class="support-item reporting">
+                        Reporting & Analytics
+                    </div>
+                    <div class="support-item system">
+                        System Integration
+                    </div>
+                </div>
+            </section>
+
+            <section class="flow-section">
+                <h2>Fitur Utama Sistem</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>📊 Tracking & Monitoring</h3>
+                        <ul>
+                            <li>Barcode/RFID scanning untuk tracking real-time</li>
+                            <li>Automated put away dengan sistem lokasi optimal</li>
+                            <li>Real-time inventory visibility</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🔧 Manajemen Operasional</h3>
+                        <ul>
+                            <li>FIFO/LIFO/FEFO inventory management</li>
+                            <li>Multi-warehouse & multi-location support</li>
+                            <li>Automated reorder point & safety stock</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>📱 Integrasi & Akses</h3>
+                        <ul>
+                            <li>Mobile application support</li>
+                            <li>Integration dengan accounting system</li>
+                            <li>Cloud-based architecture</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>📈 Analitik & Pelaporan</h3>
+                        <ul>
+                            <li>Automated billing & invoicing</li>
+                            <li>Customer portal untuk tracking</li>
+                            <li>Advanced reporting & analytics</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <div class="highlight">
+                <h3>Keuntungan Sistem WMS</h3>
+                <p>Meningkatkan efisiensi operasional gudang hingga 40%, mengurangi kesalahan pengiriman, dan memberikan visibilitas penuh terhadap inventory secara real-time.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Sistem Manajemen Gudang. Dibuat untuk kemudahan berbagi informasi.</p>
+    </footer>
+
+    <script>
+        // Animasi sederhana saat scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.flow-item, .feature-card, .support-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
